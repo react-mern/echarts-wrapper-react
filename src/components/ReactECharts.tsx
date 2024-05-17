@@ -1,4 +1,4 @@
-import { getInstanceByDom, init, ElementEvent, EChartsType } from 'echarts';
+import { getInstanceByDom, init, ElementEvent } from 'echarts';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { EchartEventType, ReactEchartsComponentProps } from '../types';
 
@@ -100,24 +100,32 @@ export const ReactEcharts = forwardRef(
 
         // Bind event handlers to ECharts events
         useEffect(() => {
-            const bindEvents = (
-                chartInstance: EChartsType,
-                events: ReactEchartsComponentProps['onEvents']
+            const bindOrUnbindEvents = (
+                events: ReactEchartsComponentProps['onEvents'],
+                bind: boolean,
             ) => {
                 if (!events) return;
                 const values = Object.keys(events) as ElementEvent['type'][];
-                values.forEach((event) => {
-                    const handler = (e: EchartEventType) =>
-                        events?.[event]?.({ event: e, chartInstance });
-                    if (!handler) return;
-                    chartInstance.on(event, handler);
-                });
-            };
-            if (chartRef.current) {
-                const chartInstance = getInstanceByDom(chartRef.current);
-                if (chartInstance) {
-                    bindEvents(chartInstance, onEvents || {});
+                if (chartRef.current) {
+                    const chartInstance = getInstanceByDom(chartRef.current)
+                    if (chartInstance) {
+                        values.forEach((event) => {
+                            const handler = (e: EchartEventType) =>
+                                events?.[event]?.({ event: e, chartInstance });
+                            if (!handler) return;
+                            if (bind) {
+                                chartInstance.on(event, handler);
+                                return;
+                            }
+                            chartInstance.off(event);
+                        })
+                    }
                 }
+            }
+            bindOrUnbindEvents(onEvents || {}, true);
+
+            return () => {
+                bindOrUnbindEvents(onEvents || {}, false);
             }
         }, [onEvents]);
 
