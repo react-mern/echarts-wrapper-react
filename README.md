@@ -141,31 +141,33 @@ Default: true
 
 to use API on chart instance, pass ref to the component and then use it wherever needed.
 
+- The **getEchartsInstance** method returns ECharts instance, allowing you to call instance's methods such as getWidth, getHeight, resize, setOption, and more.
+
 ```sh
-import React, { useRef } from 'react';
-import { EChartsType } from 'echarts';
-import { ReactEcharts } from 'echarts-wrapper-react';
+import { ReactEcharts, ReactEchartsRef } from "echarts-wrapper-react";
+import { useRef } from "react";
 
 const App = () => {
-  const chartRef = useRef<EChartsType>(null);
 
-  const updateChartData = () => {
-    const chartInstance = chartRef.current;
+  const chartRef = useRef<ReactEchartsRef>(null);
+
+  const getChartWidth = () => {
+    // get chart Instance
+    const chartInstance = chartRef.current?.getEchartsInstance();
     if (chartInstance) {
       // use any instance API
-      chartInstance.getWidth()
-      };
+      console.log(chartInstance.getWidth());
     }
   };
 
   return (
-    <div>
+    <div style={{ height: '50vh', width: '50vw' }}>
       <ReactEcharts
         ref={chartRef}
-        option={{
-          // Example chart configuration
+        option={{}}
+        // Example chart option configuration
       />
-      <button onClick={updateChartData}>Update Chart Data</button>
+      <button onClick={getChartWidth}>Get Chart Width</button>
     </div>
   );
 };

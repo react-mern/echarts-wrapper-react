@@ -21,7 +21,12 @@ export type EchartEventName =
   | 'brushSelected'
   | 'rendered'
   | 'finished'
+  | 'dataZoom'
   | 'legendselectchanged';
+
+export interface ReactEchartsRef {
+  getEchartsInstance: () => EChartsType | undefined;
+}
 
 export interface ReactEchartsComponentProps {
   /**

@@ -1,6 +1,6 @@
 import { getInstanceByDom, init, ElementEvent } from 'echarts';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { EchartEventType, ReactEchartsComponentProps } from '../types';
+import { EchartEventType, ReactEchartsComponentProps, ReactEchartsRef } from '../types';
 
 /**
  * React component for embedding ECharts charts in a React application.
@@ -8,8 +8,8 @@ import { EchartEventType, ReactEchartsComponentProps } from '../types';
  */
 export const ReactEcharts = forwardRef(
     /**
-     * @param {ReactChartsComponentProps} props - Props for ReactECharts component
-     * @param {RefObject<{ getEchartsInstance: () => EChartsType | null }>} ref - Ref for accessing ECharts instance
+     * @param {ReactEchartsComponentProps} props - Props for ReactECharts component
+     * @param {React.ForwardedRef<ReactEchartsRef>} ref - Ref for accessing ECharts instance
      */
     (
         {
@@ -26,7 +26,7 @@ export const ReactEcharts = forwardRef(
             notMerge = false,
             lazyUpdate = false,
         }: ReactEchartsComponentProps,
-        ref
+        ref: React.ForwardedRef<ReactEchartsRef>,
     ) => {
         /**
          * echarts render container
@@ -36,20 +36,17 @@ export const ReactEcharts = forwardRef(
         // Expose a method to get the ECharts instance through ref
         useImperativeHandle(
             ref,
-            () => {
-                return {
-                    /**
-                     * Returns the ECharts instance associated with this chart.
-                     * @returns {EChartsType|null} - ECharts instance or null if not available.
-                     */
-                    getEchartsInstance: () => {
-                        if (chartRef.current) return getInstanceByDom(chartRef.current);
-                        return null;
-                    },
-                };
-            },
-            []
-        );
+            () => ({
+                /**
+                 * Returns the ECharts instance associated with this chart.
+                 * @returns {EChartsType | undefined} - ECharts instance or null if not available.
+                 */
+                getEchartsInstance: () => {
+                    if (chartRef.current) return getInstanceByDom(chartRef.current);
+                },
+            }),
+            [],
+        )
 
         // Initialize the chart when the component mounts
         useEffect(() => {
