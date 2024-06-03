@@ -1,6 +1,6 @@
 {
   "name": "echarts-wrapper-react",
-  "version": "1.0.5",
+  "version": "1.0.0",
   "description": "React Wrapper for Apache Echarts",
   "keywords": [
     "react",
@@ -40,8 +40,9 @@
     "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --fix"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "echarts": "^5.5.0"
+    "echarts": "^5.5.0",
+    "echarts-gl": "^2.0.2",
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "vite-plugin-dts": "^3.9.1",
