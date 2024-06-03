@@ -1,1 +1,1 @@
-export * from './ReactECharts'
+export * from './EChartsReact';

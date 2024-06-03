@@ -24,11 +24,11 @@ export type EchartEventName =
   | 'dataZoom'
   | 'legendselectchanged';
 
-export interface ReactEchartsRef {
+export interface EChartsReactRef {
   getEchartsInstance: () => EChartsType | undefined;
 }
 
-export interface ReactEchartsComponentProps {
+export interface EChartsReactComponentProps {
   /**
    * `className` for container
    */

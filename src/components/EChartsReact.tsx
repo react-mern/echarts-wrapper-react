@@ -1,15 +1,19 @@
 import { getInstanceByDom, init, ElementEvent } from 'echarts';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { EchartEventType, ReactEchartsComponentProps, ReactEchartsRef } from '../types';
+import {
+    EchartEventType,
+    EChartsReactComponentProps,
+    EChartsReactRef,
+} from '../types';
 
 /**
  * React component for embedding ECharts charts in a React application.
  * This component provides a React-friendly interface for working with ECharts library.
  */
-export const ReactEcharts = forwardRef(
+export const EChartsReact = forwardRef(
     /**
-     * @param {ReactEchartsComponentProps} props - Props for ReactECharts component
-     * @param {React.ForwardedRef<ReactEchartsRef>} ref - Ref for accessing ECharts instance
+     * @param {EChartsReactComponentProps} props - Props for EChartsReact component
+     * @param {React.ForwardedRef<EChartsReactRef>} ref - Ref for accessing ECharts instance
      */
     (
         {
@@ -25,8 +29,8 @@ export const ReactEcharts = forwardRef(
             option,
             notMerge = false,
             lazyUpdate = false,
-        }: ReactEchartsComponentProps,
-        ref: React.ForwardedRef<ReactEchartsRef>,
+        }: EChartsReactComponentProps,
+        ref: React.ForwardedRef<EChartsReactRef>
     ) => {
         /**
          * echarts render container
@@ -45,8 +49,8 @@ export const ReactEcharts = forwardRef(
                     if (chartRef.current) return getInstanceByDom(chartRef.current);
                 },
             }),
-            [],
-        )
+            []
+        );
 
         // Initialize the chart when the component mounts
         useEffect(() => {
@@ -98,13 +102,13 @@ export const ReactEcharts = forwardRef(
         // Bind event handlers to ECharts events
         useEffect(() => {
             const bindOrUnbindEvents = (
-                events: ReactEchartsComponentProps['onEvents'],
-                bind: boolean,
+                events: EChartsReactComponentProps['onEvents'],
+                bind: boolean
             ) => {
                 if (!events) return;
                 const values = Object.keys(events) as ElementEvent['type'][];
                 if (chartRef.current) {
-                    const chartInstance = getInstanceByDom(chartRef.current)
+                    const chartInstance = getInstanceByDom(chartRef.current);
                     if (chartInstance) {
                         values.forEach((event) => {
                             const handler = (e: EchartEventType) =>
@@ -115,15 +119,15 @@ export const ReactEcharts = forwardRef(
                                 return;
                             }
                             chartInstance.off(event);
-                        })
+                        });
                     }
                 }
-            }
+            };
             bindOrUnbindEvents(onEvents || {}, true);
 
             return () => {
                 bindOrUnbindEvents(onEvents || {}, false);
-            }
+            };
         }, [onEvents]);
 
         return (
