@@ -14,128 +14,182 @@ npm install echarts
 then use it
 
 ```sh
-import React from 'react';
-import { ReactECharts } from 'echarts-wrapper-react';
+import { EChartsReact, EChartsOption } from 'echarts-wrapper-react';
 
-const MyChartComponent = () => {
-  const option = {
-    // Your ECharts option configuration
-  };
+const BasicLineChart = () => {
+    const option: EChartsOption = {
+        xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
+            {
+                data: [150, 230, 224, 218, 135, 147, 260],
+                type: 'line',
+            },
+        ],
+    };
 
-  return
-  (
-    <div style={{ width: "50vw", height: "50vh" }}>
-      <ReactEcharts option={option} />
-    </div>
-  );
+    return
+    (
+      <div style={{ width: "50vw", height: "50vh" }}>
+        <EChartsReact option={option} />
+      </div>
+    );
 };
 
-export default MyChartComponent;
+export default BasicLineChart;
 ```
 
 ## Usage
 
-Import the ReactECharts component and use it within your React application:
+Import the EChartsReact component and use it within your React application:
 
 ```bash
-import { EChartsOption } from 'echarts';
-import { ReactEcharts, ReactEchartsComponentProps } from 'echarts-wrapper-react';
+import { EChartsReact, EChartsOption, EChartsReactComponentProps } from 'echarts-wrapper-react';
+import { useLoaderData } from 'react-router-dom';
 
-const App = () => {
-  const option: EChartsOption = {
-    // Your ECharts configuration
-  };
+const RadialTree = () => {
+    const data: any = useLoaderData();
 
-  const opts: ReactEchartsComponentProps["opts"] = {
-    devicePixelRatio: 2,
-    renderer: 'svg',
-    ...
-  };
+    const option: EChartsOption = {
+        tooltip: {
+            trigger: 'item',
+            triggerOn: 'mousemove',
+        },
+        series: [
+            {
+                type: 'tree',
+                data: [data],
+                top: '18%',
+                bottom: '14%',
+                layout: 'radial',
+                symbol: 'emptyCircle',
+                symbolSize: 7,
+                initialTreeDepth: 3,
+                animationDurationUpdate: 750,
+                emphasis: {
+                    focus: 'descendant',
+                },
+            },
+        ],
+    };
 
-  const onEvents: ReactEchartsComponentProps["onEvents"] = {
-    click: ({ event, chartInstance }) => {
-      console.log('Chart clicked:', event, chartInstance);
-    },
-    legendselectchanged: ({ event, chartInstance }) => {
-      console.log('Legend selection changed:', event, chartInstance);
-    },
-    ...
-  };
+    const opts: EChartsReactComponentProps['opts'] = {
+        devicePixelRatio: 2,
+        renderer: 'svg',
+    };
 
-  return (
-    <ReactEcharts
-      option={option}
-      theme={"dark"}
-      opts={opts}
-      autoResize={false}
-      onEvents={onEvents}
-      // chart height and width
-      width="500px"
-      height="500px"
-    />
-  );
+    const onEvents: EChartsReactComponentProps['onEvents'] = {
+        click: ({ event, chartInstance }) => {
+            console.log('Chart clicked:', event, chartInstance);
+        },
+        legendselectchanged: ({ event, chartInstance }) => {
+            console.log('Legend selection changed:', event, chartInstance);
+        },
+    };
+
+    return (
+        <EChartsReact
+            option={option}
+            theme={'dark'}
+            opts={opts}
+            autoResize={false}
+            onEvents={onEvents}
+            // chart height and width
+            width="500px"
+            height="500px"
+        />
+    );
 };
 
-export default App;
+export default RadialTree;
 
+export async function RadialTreeLoader() {
+    const response = await fetch('/api/examples/data/asset/data/flare.json');
+    const data = await response.json();
+    return data;
+}
 ```
+
+### Note:
+
+To ensure proper rendering of the chart, make sure to set the height and width of the parent container appropriately. The `EChartsReact` component will inherit these dimensions, allowing for responsive chart rendering. otherwise assign chart's height and width in pixel value.
 
 ## Props
 
-### - option (required)
+| Prop              | Type                                                                                                             | Description                                                                                                                             | Default Value |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| option (required) | EChartsOption                                                                                                    | The ECharts option configuration object. refer [here](https://echarts.apache.org/en/option.html#title) for more details.                | N/A           |
+| theme             | string \| object                                                                                                 | Theme configuration for ECharts. This can be either a string representing the theme name or an object defining the theme.               | N/A           |
+| opts              | EChartsInitOpts                                                                                                  | Additional options for initializing ECharts, such as devicePixelRatio and renderer.                                                     | N/A           |
+| autoResize        | boolean                                                                                                          | Determines whether the chart should automatically resize when the window is resized.                                                    | true          |
+| onEvents          | Partial<Record<ElementEvent['type'], (params: { event: EChartEventType; chartInstance: EChartsType; }) => void>> | Event handlers for ECharts events. Each key represents an event type, and the corresponding value is a function that handles the event. | N/A           |
+| width             | PixelValue                                                                                                       | Width of the chart. Accepts a string representing a CSS pixel value.                                                                    | N/A           |
+| height            | PixelValue                                                                                                       | Height of the chart. Accepts a string representing a CSS pixel value.                                                                   | N/A           |
+| loadingType       | string                                                                                                           | Type of loading animation for ECharts like 'default'.                                                                                   | N/A           |
+| loadingOption     | object                                                                                                           | Configuration options for the loading inside showLoading, such as text, color, and maskColor.                                           | N/A           |
+| notMerge          | boolean                                                                                                          | Config for ECharts, default is false.                                                                                                   | false         |
+| lazyUpdate        | boolean                                                                                                          | Config for ECharts, default is false.                                                                                                   | false         |
 
-**Type**: EChartsOption
+## Registering Custom Themes
 
-The ECharts option configuration object, refer https://echarts.apache.org/en/option.html#title
+To register a custom theme with ECharts Wrapper React, you can define custom theme or fetch json data and then register it using the registerTheme function from ECharts.
+atlast pass the name of the theme to EchartsReact theme props.
 
-### - theme
+```bash
+import { EChartsReact, EChartsOption } from 'echarts-wrapper-react'
+import { registerTheme } from 'echarts';
 
-**Type**: string | Record<string, unknown>
+const BasicLineChart = () => {
 
-**Description**: Theme configuration for ECharts. This can be either a string representing the theme name or an object defining the theme.
+    const purpleOrangeTheme = {
+        color: [
+            '#7B68EE', // Purple
+            '#FF8C00', // Dark Orange
+            '#9370DB', // Medium Purple
+            '#FFA500', // Orange
+            '#8A2BE2', // Blue Violet (Purple)
+            '#FF4500', // Orange Red
+            '#BA55D3', // Medium Orchid (Purple)
+            '#FF6347'  // Tomato (Orange)
+        ],
+        backgroundColor: '#FFFFFF', // White background
+        textStyle: {
+            color: '#7B68EE' // Purple
+        }
+    };
 
-### - opts
+    // Register the theme
+    registerTheme('purpleOrange', purpleOrangeTheme);
 
-**Type**: EChartsInitOpts
+    const option: EChartsOption = {
+        xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                data: [150, 230, 224, 218, 135, 147, 260],
+                type: 'line'
+            }
+        ]
+    };
 
-**Description**: Additional options for initializing ECharts, such as devicePixelRatio and renderer.
+    return (
+        <EChartsReact theme="purpleOrange" option={option} />
+    )
+}
 
-### - autoResize
+export default BasicLineChart
 
-**Type**: boolean
-
-Default: true
-
-**Description**: Determines whether the chart should automatically resize when the window is resized.
-
-### - onEvents
-
-**Type**: Partial<Record<ElementEvent['type'], (params: { event: EChartEventType; chartInstance: EChartsType; }) => void>>
-
-**Description**: Event handlers for ECharts events. Each key represents an event type, and the corresponding value is a function that handles the event.
-
-### - width
-
-**Type**: PixelValue
-
-**Description**: Width of the chart. Accepts a string representing a CSS pixel value.
-
-### - height
-
-**Type**: PixelValue
-**Description**: Height of the chart. Accepts a string representing a CSS pixel value.
-
-### - loadingType
-
-**Type**: string
-
-**Description**: Type of loading animation for ECharts like 'default'.
-
-### - loadingOption
-
-**Type**: object
-
-**Description**: Configuration options for the loading inside showLoading, such as text, color, and maskColor.
+```
 
 ## Echarts API
 
@@ -144,12 +198,12 @@ to use API on chart instance, pass ref to the component and then use it wherever
 - The **getEchartsInstance** method returns ECharts instance, allowing you to call instance's methods such as getWidth, getHeight, resize, setOption, and more.
 
 ```sh
-import { ReactEcharts, ReactEchartsRef } from "echarts-wrapper-react";
+import { EChartsReact, EChartsReactRef } from "echarts-wrapper-react";
 import { useRef } from "react";
 
 const App = () => {
 
-  const chartRef = useRef<ReactEchartsRef>(null);
+  const chartRef = useRef<EChartsReactRef>(null);
 
   const getChartWidth = () => {
     // get chart Instance
@@ -162,7 +216,7 @@ const App = () => {
 
   return (
     <div style={{ height: '50vh', width: '50vw' }}>
-      <ReactEcharts
+      <EChartsReact
         ref={chartRef}
         option={{}}
         // Example chart option configuration
