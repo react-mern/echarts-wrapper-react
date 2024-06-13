@@ -1,6 +1,6 @@
 {
   "name": "echarts-wrapper-react",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "React Wrapper for Apache Echarts",
   "keywords": [
     "react",
