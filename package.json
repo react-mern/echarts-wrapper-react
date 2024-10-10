@@ -1,7 +1,30 @@
 {
   "name": "echarts-wrapper-react",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "React Wrapper for Apache Echarts",
+  "type": "module",
+  "homepage": "https://echarts-wrapper-react-examples.netlify.app/",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write --parser typescript '**/*.{ts,tsx}'",
+    "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --fix"
+  },
+  "author": "Simform Solutions",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-mern/echarts-wrapper-react.git"
+  },
+  "bugs": {
+    "url": "https://github.com/react-mern/echarts-wrapper-react/issues"
+  },
   "keywords": [
     "react",
     "echarts",
@@ -15,29 +38,14 @@
     "echarts-wrapper",
     "charting-library",
     "echarts-react",
-    "charting-library",
     "react-echarts",
     "interactive-charts"
-  ],
-  "type": "module",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.es.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "/dist"
   ],
   "lint-staged": {
     "*.{ts,tsx}": [
       "npm run format",
       "npm run lint"
     ]
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "format": "prettier --write --parser typescript '**/*.{ts,tsx}'",
-    "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --fix"
   },
   "peerDependencies": {
     "echarts": "^5.5.0",
